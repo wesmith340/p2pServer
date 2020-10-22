@@ -7,15 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class manages a list of Connections create by the Server
  */
 public class ConnectionList {
+    // Declarations
     private ConcurrentHashMap<Integer, Connection> connections;
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Constructors
     /**
      * No-Arg Constructor
      */
     public ConnectionList() {
         connections = new ConcurrentHashMap<>();
     }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Add, Remove, and Size methods
     /**
      * This method adds a new Connection
      * @param connection
@@ -24,7 +27,6 @@ public class ConnectionList {
         connection.start();
         connections.put(connections.size(), connection);
     }
-
     /**
      * This method removes a Connection from the list
      * @param connection
@@ -36,7 +38,6 @@ public class ConnectionList {
             }
         }
     }
-
     /**
      * This method returns the number of Connections in the list
      * @return
@@ -44,7 +45,8 @@ public class ConnectionList {
     public int numConnections(){
         return connections.size();
     }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Methods that need the full list
     /**
      * This method returns a list of the Connections with a specific file
      * @param fileIndex
@@ -69,7 +71,8 @@ public class ConnectionList {
         }
 
     }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Miscellaneous methods
     /**
      * This method returns the contents of this Class as a human-readable String
      * @return String
@@ -81,4 +84,5 @@ public class ConnectionList {
         }
         return msg;
     }
+/*--------------------------------------------------------------------------------------------------------------------*/
 }

@@ -1,5 +1,10 @@
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Project 2                                                                                                          */
+/* This application is designed to create a server to handle multiple Clients in a Peer-to-Peer file sharing format   */
+/* @author SVSU - CS 401 - Weston Smith                                                                               */
+/*--------------------------------------------------------------------------------------------------------------------*/
+
 package p2pServer;
-// The server class will implement the functions listed in the project description.
 
 import java.io.*;
 import java.net.*;
@@ -9,18 +14,19 @@ import java.util.*;
  * This class is designed to handle server side operations for a Peer-to-Peer style file-sharer
  */
 public class Server extends Thread{
-
+    // Declarations
     private int serverPort;
     private int MAX_CONNECTED_CLIENTS;
     private ServerSocket listener;
     private static ConnectionList connections;
 
     boolean running;
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Constructors
     /**
      * No-Arg Constructor
      */
-    public Server(){
+    public Server() {
         serverPort = 5000;
         MAX_CONNECTED_CLIENTS = 20;
         try {
@@ -34,33 +40,8 @@ public class Server extends Thread{
         connections = new ConnectionList();
         running = true;
     }
-
-    /**
-     * This method closes the Server
-     */
-    public void closeServer() {
-        running = false;
-        connections.closeConnections();
-        try {
-            this.interrupt();
-            listener.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Unable to close server socket");
-        }
-    }
-
-    /**
-     * This method returns the contents of the Server as a human-readable String
-     * @return
-     */
-    public String toString() {
-        /*for (int i=0;i<connections.size();i++) {
-            msg += connections.get(i).toString();
-        }*/
-        return connections.toString();
-    }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Run method for threading
     /**
      * This method listens for Clients who want to connect, and then creates a new thread to handle that client
      */
@@ -89,7 +70,34 @@ public class Server extends Thread{
             }
         }
     }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Methods for user input
+    /**
+     * This method closes the Server
+     */
+    public void closeServer() {
+        running = false;
+        connections.closeConnections();
+        try {
+            this.interrupt();
+            listener.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Unable to close server socket");
+        }
+    }
+    /**
+     * This method returns the contents of the Server as a human-readable String
+     * @return
+     */
+    public String toString() {
+        /*for (int i=0;i<connections.size();i++) {
+            msg += connections.get(i).toString();
+        }*/
+        return connections.toString();
+    }
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Main
     /**
      * Main
      * @param args
@@ -115,5 +123,6 @@ public class Server extends Thread{
             }
         }
     }
+/*--------------------------------------------------------------------------------------------------------------------*/
 }
 

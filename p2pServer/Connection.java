@@ -1,9 +1,7 @@
 package p2pServer;
 
-// The connection Thread is spawned from the ServerSocketHandler class for every new Client connections. Responsibilities for this thread are to hnadle client specific actions like requesting file, registering to server, and client wants to quit.
-
 import Packet.Packet;
-import Packet.Packet.EVENT_TYPE;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,6 +15,7 @@ import java.util.Random;
  * This Class manages a single Connection between the Server and the Client
  */
 class Connection extends Thread {
+    // Declarations
     Socket socket;
     ObjectInputStream inputStream;
     ObjectOutputStream outputStream;
@@ -27,8 +26,7 @@ class Connection extends Thread {
     char[] fileList;
     ConnectionList connectionList;
     boolean running;
-
-
+/*--------------------------------------------------------------------------------------------------------------------*/
     /**
      * Constructor
      * @param socket
@@ -47,7 +45,8 @@ class Connection extends Thread {
 
         this.connectionList = connectionList;
     }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Run method for threading
     /**
      * This method listens for incoming Packets from the Client
      */
@@ -68,32 +67,8 @@ class Connection extends Thread {
         }
 
     }
-
-    /**
-     * This method returns the port the Client Socket is using
-     * @return int
-     */
-    public int getPeerPort() {
-        return peerPort;
-    }
-
-    /**
-     * This method returns the Client's IP Address
-     * @return String
-     */
-    public String getPeerIP() {
-        return peerIP.getHostAddress();
-    }
-
-    /**
-     * This method determines if this Client has a specific file
-     * @param fileIndex
-     * @return Boolean
-     */
-    public boolean hasFile(int fileIndex) {
-        return fileList[fileIndex] == '1';
-    }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Methods to handle incoming packets
     /**
      * This method determines how a Packet should be handled
      * @param p
@@ -109,11 +84,10 @@ class Connection extends Thread {
             case QUIT_CLIENT: // client wants to quit
                 closeConnection();
                 break;
-                default:
-                    System.out.println("Incoming Packet did not have a valid Event Type");
+            default:
+                System.out.println("Incoming Packet did not have a valid Event Type");
         }
     }
-
     /**
      * This method initializes a Server-Client Connection
      * @param peerID
@@ -126,7 +100,6 @@ class Connection extends Thread {
         this.fileList = fileList;
         System.out.println("Client "+this.peerID+" has successfully connected");
     }
-
     /**
      * This method asks the ConnectionList if a Client has a file. Then it sends a Packet with the Client
      * Id back to the requesting Client.
@@ -159,23 +132,6 @@ class Connection extends Thread {
             System.out.println("Unable to send packet");
         }
     }
-
-    /**
-     * This method closes the Connection if a fatal Error occurs
-     */
-    private void exceptionClose() {
-        try {
-            System.out.println("Client "+peerID+" has disconnected");
-            running = false;
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-            connectionList.removeConnection(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * This method closes the Connection on request
      */
@@ -195,12 +151,37 @@ class Connection extends Thread {
             System.out.println("Unable to close socket");
         }
     }
-
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Miscellaneous methods
+    /**
+     * This method determines if this Client has a specific file
+     * @param fileIndex
+     * @return Boolean
+     */
+    public boolean hasFile(int fileIndex) {
+        return fileList[fileIndex] == '1';
+    }
+    /**
+     * This method closes the Connection if a fatal Error occurs
+     */
+    private void exceptionClose() {
+        try {
+            System.out.println("Client "+peerID+" has disconnected");
+            running = false;
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+            connectionList.removeConnection(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * This method returns the contents of a Connection as a human-readable String
      * @return String
      */
     public String toString() {
-        return "Id: "+peerID+", File Vector: "+String.valueOf(fileList)+"\n";
+        return "Id: " + peerID + ", File Vector: " + String.valueOf(fileList) + "\n";
     }
+/*--------------------------------------------------------------------------------------------------------------------*/
 }
