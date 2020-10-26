@@ -36,7 +36,6 @@ public class Server extends Thread{
             System.out.println("Unable to create server. SHUTTING DOWN");
             System.exit(0);
         }
-        //connections = new ArrayList<>();
         connections = new ConnectionList();
         running = true;
     }
