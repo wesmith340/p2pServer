@@ -98,6 +98,7 @@ class Connection extends Thread {
         this.peerID = peerID;
         this.peerListenPort = peerListenPort;
         this.fileList = fileList;
+        Server.appendOutput("Client "+this.peerID+" has successfully connected\n");
         System.out.println("Client "+this.peerID+" has successfully connected");
     }
     /**
@@ -106,6 +107,10 @@ class Connection extends Thread {
      * @param fileIndex
      */
     private void fileSearch(int fileIndex) {
+        Server.appendOutput(String.format(
+                "Client id: %d\nClient IP: %s\nRequested index: %d\n",
+                peerID, peerIP, fileIndex
+        ));
         System.out.println(String.format(
                 "Client id: %d\nClient IP: %s\nRequested index: %d\n",
                 peerID, peerIP, fileIndex
@@ -136,8 +141,8 @@ class Connection extends Thread {
      * This method closes the Connection on request
      */
     public void closeConnection() {
+        Server.appendOutput("Closing Client " +peerID+"'s connection\n");
         System.out.println("Closing Client " +peerID+"'s connection");
-        connectionList.removeConnection(this);
         try {
             running = false;
             this.interrupt();
@@ -166,6 +171,7 @@ class Connection extends Thread {
      */
     private void exceptionClose() {
         try {
+            Server.appendOutput("Client "+peerID+" has disconnected\n");
             System.out.println("Client "+peerID+" has disconnected");
             running = false;
             inputStream.close();

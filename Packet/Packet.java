@@ -72,9 +72,9 @@ public class Packet implements Serializable{
         this.FILE_VECTOR = FILE_VECTOR;
     }
 /*--------------------------------------------------------------------------------------------------------------------*/
-    // Packet building methods
+    // Smith.p2pServer.Packet building methods
     /**
-     * This method builds a Packet to give the Server basic info about a Client
+     * This method builds a Smith.p2pServer.Packet to give the Server basic info about a Client
      * @param peerID
      * @param peerListenPort
      * @param FILE_VECTOR
@@ -86,7 +86,7 @@ public class Packet implements Serializable{
         this.FILE_VECTOR = FILE_VECTOR;
     }
     /**
-     * This method builds a Packet to request the ID of a Client with a specific file
+     * This method builds a Smith.p2pServer.Packet to request the ID of a Client with a specific file
      * @param fileIndex
      */
     public void fileLookupPacket(int fileIndex) {
@@ -94,7 +94,7 @@ public class Packet implements Serializable{
         this.fileIndex = fileIndex;
     }
     /**
-     * This method builds a Packet to reply to a file lookup request
+     * This method builds a Smith.p2pServer.Packet to reply to a file lookup request
      * @param fileIndex
      * @param peerID
      */
@@ -104,13 +104,13 @@ public class Packet implements Serializable{
         this.peerID = peerID;
     }
     /**
-     * This method builds a Packet to request the Server close a Client Connection
+     * This method builds a Smith.p2pServer.Packet to request the Server close a Client Connection
      */
     public void ClientQuit() {
         this.event_type = EVENT_TYPE.QUIT_CLIENT;
     }
     /**
-     * This method builds a Packet to tell a Client to close their connection
+     * This method builds a Smith.p2pServer.Packet to tell a Client to close their connection
      */
     public void ServerQuit() {
         this.event_type = EVENT_TYPE.QUIT_SERVER;
@@ -118,10 +118,10 @@ public class Packet implements Serializable{
 /*--------------------------------------------------------------------------------------------------------------------*/
     // Miscellaneous methods
     /**
-     * This method prints the contents of a Packet to the console
+     * This method prints the contents of a Smith.p2pServer.Packet to the console
      */
     public void printPacket() {
-        System.out.println("Packet Contents");
+        System.out.println("Smith.p2pServer.Packet Contents");
         System.out.println("---------------");
         System.out.println("Sender ID : "+sender);
         System.out.println("Receiver ID : "+recipient);

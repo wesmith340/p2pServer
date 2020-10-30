@@ -6,6 +6,9 @@
 
 package p2pServer;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -14,6 +17,16 @@ import java.util.*;
  * This class is designed to handle server side operations for a Peer-to-Peer style file-sharer
  */
 public class Server extends Thread{
+    final Font font1     = new Font("Calibri", Font.PLAIN, 20);
+    final Font messageFont = new Font("Courier New", Font.PLAIN, 20);
+    private final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int WIDTH = 1200;
+    private final int HEIGHT = 600;
+
+    private JFrame mainFrame;
+    private static JTextArea outputArea;
+    private JButton listButton, quitButton;
+
     // Declarations
     private int serverPort;
     private int MAX_CONNECTED_CLIENTS;
@@ -27,9 +40,58 @@ public class Server extends Thread{
      * No-Arg Constructor
      */
     public Server() {
+        UIManager.put("OptionPane.messageFont", messageFont);
+        UIManager.put("OptionPane.buttonFont", messageFont);
+
+
+        mainFrame = new JFrame();
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+        outputArea = new JTextArea(30,30);
+        outputArea.setEditable(false);
+        outputArea.setFont(messageFont);
+        outputArea.setBackground(Color.LIGHT_GRAY);
+        outputArea.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        mainPanel.add(outputArea);
+
+        mainFrame.add(mainPanel);
+
+        JPanel buttonPanel = new JPanel();
+        listButton = new JButton("List Connections");
+        listButton.setFont(font1);
+        listButton.addActionListener(new ButtonHandler());
+        buttonPanel.add(listButton);
+        quitButton = new JButton("Quit");
+        quitButton.setFont(font1);
+        quitButton.addActionListener(new ButtonHandler());
+        buttonPanel.add(quitButton);
+        mainFrame.add(buttonPanel, BorderLayout.SOUTH);
+
+        mainFrame.setLocation((dim.width - WIDTH)/2, (dim.height - HEIGHT)/2);
+        mainFrame.setVisible(true);
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        WindowListener exitListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirm = JOptionPane.showOptionDialog(
+                        null, "Are you sure to want to close the server?",
+                        "Exit Confirmation", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, null, null);
+                if (confirm == 0) {
+                    closeServer();
+                    System.exit(0);
+                }
+            }
+        };
+        mainFrame.addWindowListener(exitListener);
+        mainFrame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+
         serverPort = 5000;
         MAX_CONNECTED_CLIENTS = 20;
         try {
+            outputArea.append("Starting Server\n");
             listener = new ServerSocket(serverPort);
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,6 +127,7 @@ public class Server extends Thread{
                 }
             } catch (IOException e) {
                 //e.printStackTrace();
+                outputArea.append("\nUnable to accept new connection");
                 System.out.println("Unable to accept new connection");
             }
         }
@@ -76,14 +139,21 @@ public class Server extends Thread{
      */
     public void closeServer() {
         running = false;
-        connections.closeConnections();
         try {
-            this.interrupt();
+            connections.closeConnections();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
             listener.close();
         } catch (IOException e) {
             e.printStackTrace();
+            outputArea.append("\nUnable to close server socket");
             System.out.println("Unable to close server socket");
         }
+    }
+    public synchronized static void appendOutput(String msg) {
+        outputArea.append(msg);
     }
     /**
      * This method returns the contents of the Server as a human-readable String
@@ -95,19 +165,39 @@ public class Server extends Thread{
         }*/
         return connections.toString();
     }
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+    // Handlers
+    private class ButtonHandler implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            if (event.getSource() == listButton) {
+                appendOutput(connections.toString());
+                System.out.println(connections.toString());
+            } else if (event.getSource() == quitButton) {
+                int confirm = JOptionPane.showOptionDialog(
+                        null, "Are you sure to want to close the server?",
+                        "Exit Confirmation", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, null, null);
+                if (confirm == 0) {
+                    closeServer();
+                    System.exit(0);
+                }
+            }
+        }
+    }
 /*--------------------------------------------------------------------------------------------------------------------*/
     // Main
     /**
      * Main
      * @param args
      */
-    public static void main(String args[])
-    {
+    public static void main(String args[]) {
         System.out.println("Starting Server");
         Server server = new Server();
         server.start();
         boolean running = true;
 
+        /*
         // User input
         Scanner scan = new Scanner(System.in);
         while (running) {
@@ -121,6 +211,7 @@ public class Server extends Thread{
                 server.closeServer();
             }
         }
+         */
     }
 /*--------------------------------------------------------------------------------------------------------------------*/
 }

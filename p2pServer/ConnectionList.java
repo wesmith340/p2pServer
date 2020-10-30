@@ -65,9 +65,11 @@ public class ConnectionList {
     /**
      * This method closes all Connections in the list
      */
-    public void closeConnections() {
+    public void closeConnections() throws InterruptedException {
         for (Object i : connections.keySet().toArray()) {
             connections.get(i).closeConnection();
+            connections.get(i).join();
+            removeConnection(connections.get(i));
         }
 
     }
