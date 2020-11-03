@@ -116,21 +116,40 @@ class Connection extends Thread {
 
         // If user is found
         if (list.size() > 0) {
-            // I thought it would be better if it didn't always use the first person found
-            Random r = new Random();
-            int index = r.nextInt(list.size());
-            out.idReplyPacket(fileIndex, list.get(index).peerID);
+            System.out.println("Users with the file index: " + fileIndex);
+            for (int i = 0; i<list.size(); i++) {
+                System.out.println("User " + list.get(i).peerID);
+                out.idReplyPacket(fileIndex+i, list.get(i).peerID);
+                try {
+                    // Send the Packet back to the Client
+                    outputStream.writeObject(out);
+                    outputStream.reset();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Unable to send packet");
+                }
+            }
+            try {
+                outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // If no users have the file
         } else {
+            System.out.println("No users have the file index: " + fileIndex);
             out.idReplyPacket(fileIndex, -1);
+            try {
+                // Send the Packet back to the Client
+                outputStream.writeObject(out);
+                outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Unable to send packet");
+            }
         }
 
-        try {
-            // Send the Packet back to the Client
-            outputStream.writeObject(out);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Unable to send packet");
-        }
+
     }
     /**
      * This method closes the Connection on request
@@ -140,7 +159,6 @@ class Connection extends Thread {
         connectionList.removeConnection(this);
         try {
             running = false;
-            this.interrupt();
             Packet p = new Packet();
             p.ServerQuit();
             outputStream.writeObject(p);

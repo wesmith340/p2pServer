@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionList {
     // Declarations
     private ConcurrentHashMap<Integer, Connection> connections;
+    private int keyCounter;
 /*--------------------------------------------------------------------------------------------------------------------*/
     // Constructors
     /**
@@ -16,6 +17,7 @@ public class ConnectionList {
      */
     public ConnectionList() {
         connections = new ConcurrentHashMap<>();
+        keyCounter = 0;
     }
 /*--------------------------------------------------------------------------------------------------------------------*/
     // Add, Remove, and Size methods
@@ -25,7 +27,8 @@ public class ConnectionList {
      */
     public void addConnection(Connection connection) {
         connection.start();
-        connections.put(connections.size(), connection);
+        connections.put(keyCounter, connection);
+        keyCounter++;
     }
     /**
      * This method removes a Connection from the list
